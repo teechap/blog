@@ -15,7 +15,6 @@
     "gatsby-link": "^1.6.40",
     "gatsby-plugin-emotion": "^1.1.16",
     "normalize.css": "^8.0.0",
-    "paper": "^0.11.5",
     "react-emotion": "^9.1.3"
   }
 }

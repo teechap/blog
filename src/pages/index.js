@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import paper from 'paper';
 import styled from 'react-emotion';
 import { withTheme } from 'emotion-theming';
 
@@ -10,6 +9,8 @@ const Canvas = styled("canvas")({
 
 class Home extends Component {
     componentDidMount() {
+        // TODO figure out why PaperJS crashes during `gatsby build`, remove
+        // global import from cdnjs
         const { theme: { grid: { breakpoints: { mobile, tablet, desktop, large } } } } = this.props;
         const c = document.getElementById("homeCanvas");
         const { scrollWidth, scrollHeight } = c;

@@ -17,6 +17,7 @@ class Home extends Component {
         paper.setup(c);
 
         let xPoints;
+        let pxPerSecond = 10;
         if (scrollWidth <= mobile) {
             xPoints = 7;
         } else if (scrollWidth <= tablet) {
@@ -31,14 +32,45 @@ class Home extends Component {
         const size = Math.ceil(scrollWidth / xPoints);
         const yPoints = Math.ceil(scrollHeight / size);
 
-        const g = new Grid(xPoints + 1, yPoints + 1, size, size);
-        const areas = g.getShapeAreas();
-        areas.forEach(area => {
-            const shape = createRandomShape(area);
-            shape.fillColor = "black";
+        const groupQueue = [
+            new paper.Group(),
+            new paper.Group()
+        ];
+        groupQueue.forEach((group, i) => {
+            const g = new Grid(xPoints + 1, yPoints + 1, size, size);
+            const areas = g.getShapeAreas();
+            areas.forEach(area => {
+                const shape = createRandomShape(area);
+                shape.fillColor = "black";
+                group.addChild(shape);
+            });
+            group.position.y = (-i * ((yPoints + 1) * size));
         });
-
-        paper.view.draw();
+        let current = 0;
+        paper.view.translate(new paper.Point(0, ((yPoints + 1) * size) / 2));
+        paper.view.onFrame = event => {
+            const trans = Math.ceil(pxPerSecond * event.delta);
+            current += trans;
+            groupQueue.forEach(g => {
+                g.position.y += trans;
+            });
+            if (current >= ((yPoints + 1) * size)) {
+                const old = groupQueue.shift();
+                old.remove();
+                const newGroup = new paper.Group();
+                const y = groupQueue[0].position.y;
+                const g = new Grid(xPoints + 1, yPoints + 1, size, size);
+                const areas = g.getShapeAreas();
+                areas.forEach(area => {
+                    const shape = createRandomShape(area);
+                    shape.fillColor = "black";
+                    newGroup.addChild(shape);
+                });
+                newGroup.position.y = y - ((yPoints + 1) * size);
+                groupQueue.push(newGroup);
+                current = 0;
+            }
+        };
     }
 
     render() {
